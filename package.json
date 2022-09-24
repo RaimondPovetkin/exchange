@@ -13,6 +13,7 @@
     "countries-list": "^2.6.1",
     "currency-flags": "^3.4.0",
     "iso-country-currency": "^0.6.0",
+    "v-mask": "^2.3.0",
     "vue": "^2.6.14",
     "vuetify": "^2.6.0"
   },

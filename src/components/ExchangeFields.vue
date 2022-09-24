@@ -1,9 +1,12 @@
 <template>
   <div>
-    По курсу ЦБ на сегодня:
+    <div class="title d-flex align-center justify-start py-5">
+      По курсу www.exchangerate-api.com на сегодня:
+    </div>
     <div class="flex">
       <div class="field-block">
         <v-text-field
+            v-mask="timeRangeMask"
             class="text-field"
             outlined
             v-model="valueFrom"
@@ -46,6 +49,7 @@
         <v-text-field
             class="text-field"
             outlined
+            readonly
             :value="value"
         ></v-text-field>
         <v-select
@@ -76,22 +80,30 @@
         </v-select>
       </div>
     </div>
+    <history-exchanges
+        v-if="rate"
+        :pairsToRemember="pairsToRemember"
+    >
+    </history-exchanges>
   </div>
-
 </template>
 
 <script>
 
 import axios from "axios";
+import HistoryExchanges from "@/components/HistoryExchanges";
 
 export default {
   name: "ExchangeFields",
+  components: {HistoryExchanges},
   props: {
     countriesAll: Object,
     defaultCurrency: String,
+    selectedRate: String,
     defaultRate: Number
   },
   data: () => ({
+    pairsToRemember: [],
     rate: null,
     valueFrom: 1,
     valueTo: null,
@@ -104,6 +116,9 @@ export default {
     this.rate = this.defaultRate
     this.$nextTick(() => {
       this.toCurrency = this.defaultCurrency
+      if(this.defaultCurrency === 'USD'){
+        this.fromCurrency = 'EUR'
+      }
     })
   },
   computed: {
@@ -112,24 +127,40 @@ export default {
     },
     value(){
       if(this.rate){
-        return this.valueFrom * this.rate
+        return  (this.valueFrom * this.rate).toFixed(3)
       }
-        return this.valueFrom * this.defaultRate
+        return (this.valueFrom * this.defaultRate).toFixed(3)
+    }
+  },
+  watch:{
+    selectedRate(){
+      this.fromCurrency = this.selectedRate
+      this.setRateCurrency()
     }
   },
   methods: {
+    rememberPair(){
+      const pair={
+        fromCurrency:this.fromCurrency,
+        toCurrency:this.toCurrency,
+        rate:this.rate,
+        id:Math.floor(Math.random() * 980) + 2
+      }
+      this.pairsToRemember.unshift(pair)
+      // localStorage.setItem("pairs", this.pairsToRemember);
+    },
+    timeRangeMask(value) {
+      const numbers = value.replace(/[^0-9.]/g, '');
+      return [(numbers)];
+    },
     async setRateCurrency(){
-      await axios.get(`https://api.apilayer.com/exchangerates_data/convert?to=${this.toCurrency}&from=${this.fromCurrency}&amount=1`, {
-        params: {
-          apikey: 'NGeUgFDVU38V1hvgSnMokm7ZMg8Go6F4'
-        }
-      })
+      await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/${this.fromCurrency}`)
           .then(responce => {
-            this.rate = responce.data.result
+            this.rate = responce.data.conversion_rates[this.toCurrency].toFixed(3)
+            this.rememberPair()
           }).catch(error => {
             console.log(error)
           })
-
     },
     getArray() {
       this.countries = Object.values(this.countriesAll).map(item => item.currency)

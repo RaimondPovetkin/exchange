@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: `https://www.amdoren.com/api/currency.php?api_key=B2QypBe2qEhJtPv9ag4iu79UPhrXhg`,
-    headers: {"Access-Control-Allow-Origin": "*"}
+    baseURL: `https://api.apilayer.com/exchangerates_data/convert`,
+    params: {
+        apikey: 'NGeUgFDVU38V1hvgSnMokm7ZMg8Go6F4'
+    }
 })
 
 export default instance

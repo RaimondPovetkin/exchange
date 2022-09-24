@@ -6,7 +6,10 @@
         app
     >
       <v-container>
-        <popular-exchanges></popular-exchanges>
+        <popular-exchanges
+          :popularCurrencies="popularCurrenciesObj"
+          @selectCurrency="selectRate($event)"
+        ></popular-exchanges>
       </v-container>
     </v-navigation-drawer>
     <v-app-bar
@@ -33,7 +36,10 @@
         <v-row>
           <v-col cols="3" v-if="screenWidth>700">
             <v-sheet rounded="lg">
-              <popular-exchanges></popular-exchanges>
+              <popular-exchanges
+                  :popularCurrencies="popularCurrenciesObj"
+                  @selectCurrency="selectRate($event)"
+              ></popular-exchanges>
             </v-sheet>
           </v-col>
           <v-col>
@@ -42,9 +48,10 @@
             >
               <div class="mx-3 pa-2">
                 <exchange-fields
-                    :countriesAll="getArr()"
+                    :countriesAll="getCountriesArr()"
                     :defaultCurrency="defaultCurrency"
                     :defaultRate="defaultRate"
+                    :selectedRate="selectedRate"
                 ></exchange-fields>
               </div>
             </v-sheet>
@@ -64,6 +71,9 @@ import countriesAll from "countries-list"
 export default {
   name: "app",
   data: () => ({
+    selectedRate: null,
+    popularCurrenciesObj: [],
+    popularCurrencies: ['US','CN','RU','DE','GB','CA'],
     leftDrawer: null,
     screenWidth: null,
     defaultCurrency: null,
@@ -74,7 +84,17 @@ export default {
     exchangeFields
   },
   methods: {
-    getArr() {
+    selectRate(event){
+      this.selectedRate=event
+      this.leftDrawer = false
+    },
+    getPopularCurrencies(){
+      for(let i in this.popularCurrencies){
+        this.popularCurrenciesObj.push(Object.entries(countriesAll.countries)
+            .find(item => item[0] === this.popularCurrencies[i])[1])
+      }
+    },
+    getCountriesArr() {
       return countriesAll.countries
     },
     getLocalCurrency() {
@@ -88,16 +108,27 @@ export default {
       return str.toUpperCase();
     },
     async getDefaultRate() {
-      await axios.get(`https://api.apilayer.com/exchangerates_data/convert?to=${this.defaultCurrency}&from=USD&amount=1`, {
-        params: {
-          apikey: 'NGeUgFDVU38V1hvgSnMokm7ZMg8Go6F4'
-        }
-      })
+
+      await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/USD`)
           .then(responce => {
-            this.defaultRate = responce.data.result
+            console.log(responce.data.conversion_rates[this.defaultCurrency])
+            this.defaultRate = responce.data.conversion_rates[this.defaultCurrency]
           }).catch(error => {
             console.log(error)
           })
+
+
+
+      // await axios.get(`https://api.apilayer.com/exchangerates_data/convert?to=${this.defaultCurrency}&from=USD&amount=1`, {
+      //   params: {
+      //     apikey: '5kL7cr26uBMKvYpeUvxxELLEvzknhEGS'
+      //   }
+      // })
+      //   .then(responce => {
+      //     this.defaultRate = responce.data.result
+      //   }).catch(error => {
+      //     console.log(error)
+      //   })
     },
     onResize() {
       this.screenWidth = window.innerWidth
@@ -110,6 +141,7 @@ export default {
     })
     this.getLocalCurrency()
     this.getDefaultRate()
+    this.getPopularCurrencies()
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize);
