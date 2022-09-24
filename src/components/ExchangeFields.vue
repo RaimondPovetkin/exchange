@@ -89,7 +89,7 @@
 
 <script>
 
-import axios from "axios";
+import instance from "@/API/Axios";
 import HistoryExchanges from "@/components/HistoryExchanges";
 
 export default {
@@ -152,7 +152,7 @@ export default {
       return [(numbers)];
     },
     async setRateCurrency() {
-      await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/${this.fromCurrency}`)
+      await instance.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/${this.fromCurrency}`)
           .then(responce => {
             this.rate = responce.data.conversion_rates[this.toCurrency].toFixed(3)
             this.rememberPair()

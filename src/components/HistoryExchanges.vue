@@ -1,22 +1,21 @@
 <template>
-<div class="main">
+<div>
   <div v-if="pairsToRemember.length" >
     Просматривали ранее:
   </div>
   <div class="grid">
-    <div class="row my-5 mx-3" v-for="i in pairsToRemember" :key="i.id" >
+    <div class="row my-5 mx-3" v-for="item in pairsToRemember" :key="item.id" >
       <div class="column mx-3">
-        <div :class="['currency-flag-' + i.fromCurrency.toLowerCase()]" class="currency-flag mr-2"></div>
-        <div>{{i.fromCurrency}}</div>
+        <div :class="['currency-flag-' + item.fromCurrency.toLowerCase()]" class="currency-flag mr-2"></div>
+        <div>{{item.fromCurrency}}</div>
         <div class="ml-2">/</div>
-        <div :class="['currency-flag-' + i.toCurrency.toLowerCase()]" class="currency-flag mx-2"></div>
-        <div>{{i.toCurrency}}</div>
+        <div :class="['currency-flag-' + item.toCurrency.toLowerCase()]" class="currency-flag mx-2"></div>
+        <div>{{item.toCurrency}}</div>
       </div>
-
       <div class="column mx-3">
         <div>1</div>
         <div class="ml-2">/</div>
-        <div>{{i.rate}}</div>
+        <div>{{item.rate}}</div>
       </div>
     </div>
   </div>

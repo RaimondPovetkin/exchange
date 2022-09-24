@@ -1,10 +1,6 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: `https://api.apilayer.com/exchangerates_data/convert`,
-    params: {
-        apikey: 'NGeUgFDVU38V1hvgSnMokm7ZMg8Go6F4'
-    }
-})
+    baseURL: `https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/`})
 
 export default instance

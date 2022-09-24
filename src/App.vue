@@ -65,11 +65,15 @@
 <script>
 import popularExchanges from "@/components/PopularExchanges";
 import exchangeFields from "@/components/ExchangeFields";
-import axios from "axios"
+import instance from "@/API/Axios";
 import countriesAll from "countries-list"
 
 export default {
   name: "app",
+  components: {
+    popularExchanges,
+    exchangeFields
+  },
   data: () => ({
     selectedRate: null,
     popularCurrenciesObj: [],
@@ -79,9 +83,14 @@ export default {
     defaultCurrency: null,
     defaultRate: null
   }),
-  components: {
-    popularExchanges,
-    exchangeFields
+  mounted() {
+    this.screenWidth = window.screen.width
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize);
+    })
+    this.getLocalCurrency()
+    this.getDefaultRate()
+    this.getPopularCurrencies()
   },
   methods: {
     selectRate(event){
@@ -108,7 +117,7 @@ export default {
       return str.toUpperCase();
     },
     async getDefaultRate() {
-      await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/USD`)
+      await instance.get(`USD`)
         .then(responce => {
           this.defaultRate = responce.data.conversion_rates[this.defaultCurrency]
         }).catch(error => {
@@ -118,15 +127,6 @@ export default {
     onResize() {
       this.screenWidth = window.innerWidth
     },
-  },
-  mounted() {
-    this.screenWidth = window.screen.width
-    this.$nextTick(() => {
-      window.addEventListener('resize', this.onResize);
-    })
-    this.getLocalCurrency()
-    this.getDefaultRate()
-    this.getPopularCurrencies()
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize);
