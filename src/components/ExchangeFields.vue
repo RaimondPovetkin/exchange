@@ -19,10 +19,10 @@
             @change="setRateCurrency"
         >
           <template v-slot:item="{item}">
-              <div :class="['currency-flag-' + item.toLowerCase()]" class="currency-flag"></div>
-              <span
-                  class="pl-3"
-              >
+            <div :class="['currency-flag-' + item.toLowerCase()]" class="currency-flag"></div>
+            <span
+                class="pl-3"
+            >
               {{ item }}
             </span>
           </template>
@@ -33,10 +33,9 @@
             >
               {{ item }}
             </span>
-            <div :class="['currency-flag-' + item.toLowerCase()]" class="currency-flag ml-2"></div>
+              <div :class="['currency-flag-' + item.toLowerCase()]" class="currency-flag ml-2"></div>
             </div>
           </template>
-
         </v-select>
       </div>
       <v-icon
@@ -50,7 +49,7 @@
             class="text-field"
             outlined
             readonly
-            :value="value"
+            :value="finalValue"
         ></v-text-field>
         <v-select
             class="select"
@@ -112,11 +111,11 @@ export default {
     countries: [],
   }),
   mounted() {
-    this.getArray()
+    this.getArrayCountries()
     this.rate = this.defaultRate
     this.$nextTick(() => {
       this.toCurrency = this.defaultCurrency
-      if(this.defaultCurrency === 'USD'){
+      if (this.defaultCurrency === 'USD') {
         this.fromCurrency = 'EUR'
       }
     })
@@ -125,35 +124,34 @@ export default {
     getNormalizeCountries() {
       return this.countries.map(item => item.substring(0, 3)).filter(item => item)
     },
-    value(){
-      if(this.rate){
-        return  (this.valueFrom * this.rate).toFixed(3)
+    finalValue() {
+      if (this.rate) {
+        return (this.valueFrom * this.rate).toFixed(3)
       }
-        return (this.valueFrom * this.defaultRate).toFixed(3)
+      return (this.valueFrom * this.defaultRate).toFixed(3)
     }
   },
-  watch:{
-    selectedRate(){
+  watch: {
+    selectedRate() {
       this.fromCurrency = this.selectedRate
       this.setRateCurrency()
     }
   },
   methods: {
-    rememberPair(){
-      const pair={
-        fromCurrency:this.fromCurrency,
-        toCurrency:this.toCurrency,
-        rate:this.rate,
-        id:Math.floor(Math.random() * 980) + 2
+    rememberPair() {
+      const pair = {
+        fromCurrency: this.fromCurrency,
+        toCurrency: this.toCurrency,
+        rate: this.rate,
+        id: Math.floor(Math.random() * 980) + 2
       }
       this.pairsToRemember.unshift(pair)
-      // localStorage.setItem("pairs", this.pairsToRemember);
     },
     timeRangeMask(value) {
       const numbers = value.replace(/[^0-9.]/g, '');
       return [(numbers)];
     },
-    async setRateCurrency(){
+    async setRateCurrency() {
       await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/${this.fromCurrency}`)
           .then(responce => {
             this.rate = responce.data.conversion_rates[this.toCurrency].toFixed(3)
@@ -162,7 +160,7 @@ export default {
             console.log(error)
           })
     },
-    getArray() {
+    getArrayCountries() {
       this.countries = Object.values(this.countriesAll).map(item => item.currency)
     }
   }
@@ -175,13 +173,12 @@ export default {
 .icon {
   transform: rotate(0deg)
 }
-
 .flex {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.item-flag{
+.item-flag {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,26 +192,22 @@ export default {
   border-top-left-radius: 0px !important;
   border-bottom-left-radius: 0px !important;
 }
-
 .field-block {
   width: 100%;
   display: flex;
 }
-
 .text-field {
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
   border-top-left-radius: 5px !important;
   border-bottom-left-radius: 5px !important;
 }
-
 @media (min-device-width: 700px) and (max-device-width: 1265px) {
-  .item-flag{
+  .item-flag {
     flex-direction: column;
     justify-content: center;
   }
 }
-
 @media (max-device-width: 700px) {
   .flex {
     flex-direction: column;
@@ -224,7 +217,6 @@ export default {
     flex-direction: column;
     justify-content: center;
   }
-
   .icon {
     transform: rotate(90deg);
     padding: 0 !important;

@@ -108,27 +108,12 @@ export default {
       return str.toUpperCase();
     },
     async getDefaultRate() {
-
       await axios.get(`https://v6.exchangerate-api.com/v6/8084f569e17e097a3e305091/latest/USD`)
-          .then(responce => {
-            console.log(responce.data.conversion_rates[this.defaultCurrency])
-            this.defaultRate = responce.data.conversion_rates[this.defaultCurrency]
-          }).catch(error => {
-            console.log(error)
-          })
-
-
-
-      // await axios.get(`https://api.apilayer.com/exchangerates_data/convert?to=${this.defaultCurrency}&from=USD&amount=1`, {
-      //   params: {
-      //     apikey: '5kL7cr26uBMKvYpeUvxxELLEvzknhEGS'
-      //   }
-      // })
-      //   .then(responce => {
-      //     this.defaultRate = responce.data.result
-      //   }).catch(error => {
-      //     console.log(error)
-      //   })
+        .then(responce => {
+          this.defaultRate = responce.data.conversion_rates[this.defaultCurrency]
+        }).catch(error => {
+          console.log(error)
+        })
     },
     onResize() {
       this.screenWidth = window.innerWidth

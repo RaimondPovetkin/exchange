@@ -3,22 +3,22 @@
     <div class="d-flex align-center justify-center py-5">
       ПОПУЛЯРНЫЕ ВАЛЮТЫ
     </div>
-    <div v-for="i in popularCurrencies" :key="i.currency"
+    <div v-for="item in popularCurrencies" :key="item.currency"
          class="flex py-4 ma-2 back"
-         @click="$emit('selectCurrency', i.currency.substring(0, 3))"
+         @click="$emit('selectCurrency', item.currency.substring(0, 3))"
     >
       <div class="first-row">
-        <div :class="['currency-flag-' + i.currency.substring(0, 3).toLowerCase()]" class="currency-flag ml-2"></div>
+        <div :class="['currency-flag-' + item.currency.substring(0, 3).toLowerCase()]" class="currency-flag ml-2"></div>
         <div class="code-country pl-2">
-          {{i.currency.substring(0, 3)}}
+          {{item.currency.substring(0, 3)}}
         </div>
       </div>
       <div class="second-row">
         <div class="name-country pl-5 text-sm-body-2">
-          {{i.name}}
+          {{item.name}}
         </div>
         <div class="native-country pl-5 text-sm-body-2">
-          {{i.native}}
+          {{item.native}}
         </div>
       </div>
     </div>
